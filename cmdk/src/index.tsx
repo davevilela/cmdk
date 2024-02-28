@@ -36,6 +36,7 @@ type ListProps = Children &
      * Accessible label for this List of suggestions. Not shown visibly.
      */
     label?: string
+    listInnerRef?: React.RefObject<HTMLDivElement>
   }
 type ItemProps = Children &
   Omit<DivProps, 'disabled' | 'onSelect' | 'value'> & {
@@ -113,7 +114,7 @@ type CommandProps = Children &
      * Set to `false` to disable ctrl+n/j/p/k shortcuts. Defaults to `true`.
      */
     vimBindings?: boolean
-    listInnerRef?: React.MutableRefObject<HTMLDivElement>
+    listInnerRef: React.RefObject<HTMLDivElement | null>
   }
 
 type Context = {
@@ -203,7 +204,7 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
 
   const localListRef = React.useRef<HTMLDivElement>(null)
 
-  const listInnerRef = props.listInnerRef || localListRef
+  const listInnerRef = props.listInnerRef.current ? props.listInnerRef : localListRef
 
   const schedule = useScheduleLayoutEffect()
 
@@ -852,7 +853,7 @@ const List = React.forwardRef<HTMLDivElement, ListProps>((props, forwardedRef) =
       id={context.listId}
     >
       {SlottableWithNestedChildren(props, (child) => (
-        <div ref={mergeRefs([height, context.listInnerRef])} cmdk-list-sizer="">
+        <div ref={mergeRefs([height, context.listInnerRef, props.listInnerRef])} cmdk-list-sizer="">
           {child}
         </div>
       ))}
