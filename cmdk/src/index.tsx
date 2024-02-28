@@ -113,6 +113,7 @@ type CommandProps = Children &
      * Set to `false` to disable ctrl+n/j/p/k shortcuts. Defaults to `true`.
      */
     vimBindings?: boolean
+    listInnerRef?: React.MutableRefObject<HTMLDivElement>
   }
 
 type Context = {
@@ -200,7 +201,9 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
   const labelId = React.useId()
   const inputId = React.useId()
 
-  const listInnerRef = React.useRef<HTMLDivElement>(null)
+  const localListRef = React.useRef<HTMLDivElement>(null)
+
+  const listInnerRef = props.listInnerRef || localListRef
 
   const schedule = useScheduleLayoutEffect()
 
